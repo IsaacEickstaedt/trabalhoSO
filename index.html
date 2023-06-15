@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<head>
+  <title>Simulação de Gerenciamento de Processos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    
+    h1 {
+      text-align: center;
+    }
+    
+    form {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      font-weight: bold;
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    select,
+    button {
+      padding: 5px;
+      margin-bottom: 10px;
+      width: 200px;
+    }
+    
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    
+    #resultado {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simulação de Gerenciamento de Processos</h1>
+  
+  <form id="processForm">
+    <label for="nome">PID do Processo:</label>
+    <br>
+    <input type="text" id="nome" required>
+    <br>
+    <label for="tempoExecucao">Tempo de Execução:</label>
+    <br>
+    <input type="number" id="tempoExecucao" required>
+    <br>
+    <label for="politicaEscalonamento">Política de Escalonamento:</label>
+    <br>
+    <select id="politicaEscalonamento" required>
+      <option value="fifo">FIFO</option>
+      <option value="sjf">SJF</option>
+      <option value="roundRobin">Round Robin</option>
+    </select>
+    <br>
+    <div id="quantumInput" style="display: none;">
+      <label for="quantum">Quantum:</label>
+      <br>
+      <input type="number" id="quantum">
+      <br>
+    </div>
+    <button type="submit">Adicionar Processo</button>
+  </form>
+  
+  <table id="processTable">
+    <tr>
+      <th>Nome do Processo</th>
+      <th>Tempo de Execução</th>
+      <th>Política de Escalonamento</th>
+      <th>Quantum</th>
+    </tr>
+  </table>
+  
+  <button id="executarBtn">Executar Processos</button>
+  
+  <div id="resultado"></div>
+  
+  <script>
+    // Classe Processo
+    class Processo {
+      constructor(nome, tempoExecucao, politicaEscalonamento, quantum) {
+        this.nome = nome;
+        this.tempoExecucao = tempoExecucao;
+        this.politicaEscalonamento = politicaEscalonamento;
+        this.quantum = quantum;
+      }
+    }
+    
+    // Lista de processos
+    const processos = [];
+    
+    // Função para adicionar um novo processo
+    function adicionarProcesso(event) {
+      event.preventDefault();
+      
+      const nomeInput = document.getElementById("nome");
+      const tempoExecucaoInput = document.getElementById("tempoExecucao");
+      const politicaEscalonamentoInput = document.getElementById("politicaEscalonamento");
+      const quantumInput = document.getElementById("quantum");
+      
+      const nome = nomeInput.value;
+      const tempoExecucao = parseInt(tempoExecucaoInput.value);
+      const politicaEscalonamento = politicaEscalonamentoInput.value;
+      const quantum = politicaEscalonamento === "roundRobin" ? parseInt(quantumInput.value) : null;
+      
+      processos.push(new Processo(nome, tempoExecucao, politicaEscalonamento, quantum));
+      
+      nomeInput.value = "";
+      tempoExecucaoInput.value = "";
+      quantumInput.value = "";
+      
+      exibirProcessos();
+    }
+    
+    // Função para exibir os processos na tabela
+    function exibirProcessos() {
+      const tableBody = document.getElementById("processTable").getElementsByTagName("tbody")[0];
+      
+      // Limpar a tabela
+      while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+      }
+      
+      // Preencher a tabela com os processos
+      processos.forEach((processo) => {
+        const row = tableBody.insertRow();
+        
+        const nomeCell = row.insertCell();
+        nomeCell.textContent = processo.nome;
+        
+        const tempoExecucaoCell = row.insertCell();
+        tempoExecucaoCell.textContent = processo.tempoExecucao;
+        
+        const politicaEscalonamentoCell = row.insertCell();
+        politicaEscalonamentoCell.textContent = processo.politicaEscalonamento;
+        
+        const quantumCell = row.insertCell();
+        quantumCell.textContent = processo.quantum !== null ? processo.quantum : "-";
+      });
+    }
+    
+    // Função para executar os processos
+    function executarProcessos() {
+      let tempoTotal = 0;
+      let tempoTrocaContextoTotal = 0;
+      let resultado = "Executando processos:<br>";
+      
+      // Ordenar os processos por tempo de execução crescente
+      const processosOrdenados = processos.slice().sort((a, b) => a.tempoExecucao - b.tempoExecucao);
+      
+      processosOrdenados.forEach((processo, index) => {
+        resultado += `Processo ${processo.nome} iniciado. Tempo de execução: ${processo.tempoExecucao}. Política de escalonamento: ${processo.politicaEscalonamento}`;
+        
+        if (processo.politicaEscalonamento === "roundRobin") {
+          resultado += `. Quantum: ${processo.quantum}`;
+        }
+        
+        resultado += "<br>";
+        
+        tempoTotal += processo.tempoExecucao;
+        
+        if (index < processosOrdenados.length - 1) {
+          const proximoProcesso = processosOrdenados[index + 1];
+          const tempoTrocaContexto = proximoProcesso.tempoExecucao;
+          resultado += `Tempo de troca de contexto para o próximo processo: ${tempoTrocaContexto}<br>`;
+          tempoTrocaContextoTotal += tempoTrocaContexto;
+          tempoTotal += tempoTrocaContexto;
+        }
+        
+        resultado += `Processo ${processo.nome} concluído. Tempo total: ${tempoTotal}. Tempo de troca de contexto total: ${tempoTrocaContextoTotal}<br>`;
+      });
+      
+      resultado += "Todos os processos foram executados.";
+      
+      document.getElementById("resultado").innerHTML = resultado;
+    }
+    
+    // Event listener para o formulário de adição de processos
+    const form = document.getElementById("processForm");
+    form.addEventListener("submit", adicionarProcesso);
+    
+    // Event listener para o botão de execução de processos
+    const executarBtn = document.getElementById("executarBtn");
+    executarBtn.addEventListener("click", executarProcessos);
+    
+    // Event listener para mostrar/ocultar o campo de quantum quando a política de escalonamento é alterada
+    const politicaEscalonamentoInput = document.getElementById("politicaEscalonamento");
+    const quantumInput = document.getElementById("quantumInput");
+    politicaEscalonamentoInput.addEventListener("change", function() {
+      if (this.value === "roundRobin") {
+        quantumInput.style.display = "block";
+      } else {
+        quantumInput.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
