@@ -67,29 +67,73 @@
   <h1>Simulação de Gerenciamento de Processos</h1>
   
   <form id="processForm">
-    <label for="nome">PID do Processo:</label>
-    <br>
-    <input type="text" id="nome" required>
-    <br>
-    <label for="tempoExecucao">Tempo de Execução:</label>
-    <br>
-    <input type="number" id="tempoExecucao" required>
-    <br>
-    <label for="politicaEscalonamento">Política de Escalonamento:</label>
-    <br>
-    <select id="politicaEscalonamento" required>
-      <option value="fifo">FIFO</option>
-      <option value="sjf">SJF</option>
-      <option value="roundRobin">Round Robin</option>
-    </select>
-    <br>
-    <div id="quantumInput" style="display: none;">
-      <label for="quantum">Quantum:</label>
-      <br>
-      <input type="number" id="quantum">
-      <br>
+    <div class="row">
+      <div class="col-md-3"></div>
+        <div class="col-md-6 text-center">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-2"></div>
+                  <div class="col-md-8">
+                    <div class="text-left">
+                      <label for="nome">PID do Processo:</label>
+                    </div>
+                      <input type="text" id="nome" required>
+                  </div>
+                <div class="col-md-2"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-2"></div>
+                  <div class="col-md-8">
+                    <div class="text-left">
+                      <label for="tempoExecucao">Tempo de Execução:</label>
+                    </div>
+                      <input type="number" id="tempoExecucao" required>
+                  </div>
+                <div class="col-md-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <div class="col-md-3"></div>
     </div>
-    <button type="submit">Adicionar Processo</button>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <div class="row">
+          <div class="col-md-12">
+            <label for="politicaEscalonamento">Política de Escalonamento:</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <select id="politicaEscalonamento" required>
+              <option value="fifo">FIFO</option>
+              <option value="sjf">SJF</option>
+              <option value="roundRobin">Round Robin</option>
+            </select>  
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-5"></div>
+            <div class="col-md-2">
+              <div id="quantumInput" style="display: none;">
+                <div class="row">
+                  <div class="col-md-12 text-left">
+                    <label for="quantum">Quantum:</label>
+                  </div>
+                </div>
+                <input type="number" id="quantum">
+              </div>
+            </div>
+          <div class="col-md-5"></div>
+        </div>
+        <p>
+          <button type="submit">Adicionar Processo</button>
+        </p>
+      </div>
+    </div>
   </form>
   
   <table id="processTable">
