@@ -150,7 +150,6 @@
   <div id="resultado"></div>
   
   <script>
-    // Classe Processo
     class Processo {
       constructor(nome, tempoExecucao, politicaEscalonamento, quantum) {
         this.nome = nome;
@@ -160,10 +159,9 @@
       }
     }
     
-    // Lista de processos
     const processos = [];
     
-    // Função para adicionar um novo processo
+
     function adicionarProcesso(event) {
       event.preventDefault();
       
@@ -186,16 +184,13 @@
       exibirProcessos();
     }
     
-    // Função para exibir os processos na tabela
     function exibirProcessos() {
       const tableBody = document.getElementById("processTable").getElementsByTagName("tbody")[0];
       
-      // Limpar a tabela
       while (tableBody.firstChild) {
         tableBody.removeChild(tableBody.firstChild);
       }
       
-      // Preencher a tabela com os processos
       processos.forEach((processo) => {
         const row = tableBody.insertRow();
         
@@ -213,13 +208,11 @@
       });
     }
     
-    // Função para executar os processos
     function executarProcessos() {
       let tempoTotal = 0;
       let tempoTrocaContextoTotal = 0;
       let resultado = "Executando processos:<br>";
       
-      // Ordenar os processos por tempo de execução crescente
       const processosOrdenados = processos.slice().sort((a, b) => a.tempoExecucao - b.tempoExecucao);
       
       processosOrdenados.forEach((processo, index) => {
@@ -249,15 +242,12 @@
       document.getElementById("resultado").innerHTML = resultado;
     }
     
-    // Event listener para o formulário de adição de processos
     const form = document.getElementById("processForm");
     form.addEventListener("submit", adicionarProcesso);
     
-    // Event listener para o botão de execução de processos
     const executarBtn = document.getElementById("executarBtn");
     executarBtn.addEventListener("click", executarProcessos);
     
-    // Event listener para mostrar/ocultar o campo de quantum quando a política de escalonamento é alterada
     const politicaEscalonamentoInput = document.getElementById("politicaEscalonamento");
     const quantumInput = document.getElementById("quantumInput");
     politicaEscalonamentoInput.addEventListener("change", function() {
