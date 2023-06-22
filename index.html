@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <meta charset="UTF-8">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <head>
+  <meta charset="UTF-8">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <title>Simulação de Gerenciamento de Processos</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
     }
-    
+
     h1 {
       text-align: center;
     }
-    
+
     form {
       margin-bottom: 20px;
     }
-    
+
     label {
       font-weight: bold;
     }
-    
+
     input[type="text"],
     input[type="number"],
     select,
@@ -33,29 +33,29 @@
       margin-bottom: 10px;
       width: 200px;
     }
-    
+
     button {
       background-color: #4CAF50;
       color: white;
       border: none;
       cursor: pointer;
     }
-    
+
     button:hover {
       background-color: #45a049;
     }
-    
+
     table {
       border-collapse: collapse;
       width: 100%;
     }
-    
+
     th, td {
       border: 1px solid #ddd;
       padding: 8px;
       text-align: left;
     }
-    
+
     #resultado {
       margin-top: 20px;
       padding: 10px;
@@ -65,198 +65,181 @@
 </head>
 <body>
   <h1>Simulação de Gerenciamento de Processos</h1>
-  
+
   <form id="processForm">
     <div class="row">
       <div class="col-md-3"></div>
-        <div class="col-md-6 text-center">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="row">
-                <div class="col-md-2"></div>
-                  <div class="col-md-8">
-                    <div class="text-left">
-                      <label for="nome">PID do Processo:</label>
-                    </div>
-                      <input type="text" id="nome" required>
-                  </div>
-                <div class="col-md-2"></div>
+      <div class="col-md-6 text-center">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-8">
+                <div class="text-left">
+                  <label for="nome">PID do Processo:</label>
+                </div>
+                <input type="text" id="nome" required>
               </div>
+              <div class="col-md-2"></div>
             </div>
-            <div class="col-md-6">
-              <div class="row">
-                <div class="col-md-2"></div>
-                  <div class="col-md-8">
-                    <div class="text-left">
-                      <label for="tempoExecucao">Tempo de Execução:</label>
-                    </div>
-                      <input type="number" id="tempoExecucao" required>
-                  </div>
-                <div class="col-md-2"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-8">
+                <div class="text-left">
+                  <label for="tempoExecucao">Tempo de Execução:</label>
+                </div>
+                <input type="number" id="tempoExecucao" required>
               </div>
+              <div class="col-md-2"></div>
             </div>
           </div>
         </div>
+      </div>
       <div class="col-md-3"></div>
     </div>
     <div class="row">
       <div class="col-md-12 text-center">
         <div class="row">
           <div class="col-md-12">
-            <label for="politicaEscalonamento">Política de Escalonamento:</label>
+            <button type="button" onclick="adicionarProcesso()">Adicionar Processo</button>
           </div>
         </div>
         <div class="row">
           <div class="col-md-12">
-            <select id="politicaEscalonamento" required>
+            <select id="politicaEscalonamento" required disabled>
+              <option value="">Selecione</option>
               <option value="fifo">FIFO</option>
               <option value="sjf">SJF</option>
               <option value="roundRobin">Round Robin</option>
-            </select>  
+            </select>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-5"></div>
-            <div class="col-md-2">
-              <div id="quantumInput" style="display: none;">
-                <div class="row">
-                  <div class="col-md-12 text-left">
-                    <label for="quantum">Quantum:</label>
-                  </div>
-                </div>
-                <input type="number" id="quantum">
-              </div>
-            </div>
-          <div class="col-md-5"></div>
+          <div class="col-md-12">
+            <button type="button" onclick="executarProcessos()" disabled>Executar Processos</button>
+          </div>
         </div>
-        <p>
-          <button type="submit">Adicionar Processo</button>
-        </p>
       </div>
     </div>
   </form>
-  
+
+  <h2>Lista de Processos</h2>
   <table id="processTable">
-    <tr>
-      <th>Nome do Processo</th>
-      <th>Tempo de Execução</th>
-      <th>Política de Escalonamento</th>
-      <th>Quantum</th>
-    </tr>
+    <thead>
+      <tr>
+        <th>PID do Processo</th>
+        <th>Tempo de Execução</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
   </table>
-  
-  <button id="executarBtn">Executar Processos</button>
-  
+
   <div id="resultado"></div>
-  
+
   <script>
     class Processo {
-      constructor(nome, tempoExecucao, politicaEscalonamento, quantum) {
-        this.nome = nome;
+      constructor(pid, tempoExecucao) {
+        this.pid = pid;
         this.tempoExecucao = tempoExecucao;
-        this.politicaEscalonamento = politicaEscalonamento;
-        this.quantum = quantum;
       }
     }
-    
-    const processos = [];
-    
 
-    function adicionarProcesso(event) {
-      event.preventDefault();
-      
-      const nomeInput = document.getElementById("nome");
+    const processos = [];
+
+    function adicionarProcesso() {
+      const pidInput = document.getElementById("nome");
       const tempoExecucaoInput = document.getElementById("tempoExecucao");
-      const politicaEscalonamentoInput = document.getElementById("politicaEscalonamento");
-      const quantumInput = document.getElementById("quantum");
-      
-      const nome = nomeInput.value;
+
+      const pid = pidInput.value;
       const tempoExecucao = parseInt(tempoExecucaoInput.value);
-      const politicaEscalonamento = politicaEscalonamentoInput.value;
-      const quantum = politicaEscalonamento === "roundRobin" ? parseInt(quantumInput.value) : null;
-      
-      processos.push(new Processo(nome, tempoExecucao, politicaEscalonamento, quantum));
-      
-      nomeInput.value = "";
-      tempoExecucaoInput.value = "";
-      quantumInput.value = "";
-      
-      exibirProcessos();
-    }
-    
-    function exibirProcessos() {
-      const tableBody = document.getElementById("processTable").getElementsByTagName("tbody")[0];
-      
-      while (tableBody.firstChild) {
-        tableBody.removeChild(tableBody.firstChild);
+
+      if (pid && tempoExecucao) {
+        const processo = new Processo(pid, tempoExecucao);
+        processos.push(processo);
+
+        const tableBody = document.querySelector("#processTable tbody");
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `<td>${processo.pid}</td><td>${processo.tempoExecucao}</td>`;
+        tableBody.appendChild(newRow);
+
+        pidInput.value = "";
+        tempoExecucaoInput.value = "";
+
+        const politicaEscalonamentoInput = document.getElementById("politicaEscalonamento");
+        politicaEscalonamentoInput.removeAttribute("disabled");
+
+        const executarBtn = document.querySelector("button[onclick='executarProcessos()']");
+        executarBtn.removeAttribute("disabled");
       }
-      
-      processos.forEach((processo) => {
-        const row = tableBody.insertRow();
-        
-        const nomeCell = row.insertCell();
-        nomeCell.textContent = processo.nome;
-        
-        const tempoExecucaoCell = row.insertCell();
-        tempoExecucaoCell.textContent = processo.tempoExecucao;
-        
-        const politicaEscalonamentoCell = row.insertCell();
-        politicaEscalonamentoCell.textContent = processo.politicaEscalonamento;
-        
-        const quantumCell = row.insertCell();
-        quantumCell.textContent = processo.quantum !== null ? processo.quantum : "-";
-      });
     }
-    
+
     function executarProcessos() {
+      const politicaEscalonamentoInput = document.getElementById("politicaEscalonamento");
+      const politicaEscalonamento = politicaEscalonamentoInput.value;
+
       let tempoTotal = 0;
-      let tempoTrocaContextoTotal = 0;
-      let resultado = "Executando processos:<br>";
-      
-      const processosOrdenados = processos.slice().sort((a, b) => a.tempoExecucao - b.tempoExecucao);
-      
-      processosOrdenados.forEach((processo, index) => {
-        resultado += `Processo ${processo.nome} iniciado. Tempo de execução: ${processo.tempoExecucao}. Política de escalonamento: ${processo.politicaEscalonamento}`;
-        
-        if (processo.politicaEscalonamento === "roundRobin") {
-          resultado += `. Quantum: ${processo.quantum}`;
-        }
-        
-        resultado += "<br>";
-        
+
+      for (let i = 0; i < processos.length; i++) {
+        const processo = processos[i];
         tempoTotal += processo.tempoExecucao;
-        
-        if (index < processosOrdenados.length - 1) {
-          const proximoProcesso = processosOrdenados[index + 1];
-          const tempoTrocaContexto = proximoProcesso.tempoExecucao;
-          resultado += `Tempo de troca de contexto para o próximo processo: ${tempoTrocaContexto}<br>`;
-          tempoTrocaContextoTotal += tempoTrocaContexto;
-          tempoTotal += tempoTrocaContexto;
-        }
-        
-        resultado += `Processo ${processo.nome} concluído. Tempo total: ${tempoTotal}. Tempo de troca de contexto total: ${tempoTrocaContextoTotal}<br>`;
-      });
-      
-      resultado += "Todos os processos foram executados.";
-      
-      document.getElementById("resultado").innerHTML = resultado;
-    }
-    
-    const form = document.getElementById("processForm");
-    form.addEventListener("submit", adicionarProcesso);
-    
-    const executarBtn = document.getElementById("executarBtn");
-    executarBtn.addEventListener("click", executarProcessos);
-    
-    const politicaEscalonamentoInput = document.getElementById("politicaEscalonamento");
-    const quantumInput = document.getElementById("quantumInput");
-    politicaEscalonamentoInput.addEventListener("change", function() {
-      if (this.value === "roundRobin") {
-        quantumInput.style.display = "block";
-      } else {
-        quantumInput.style.display = "none";
       }
-    });
+
+      let ordemExecucao = "";
+      let tempoExecucaoProcessos = [];
+      let tempoExecucaoTotal = 0;
+
+      if (politicaEscalonamento === "fifo") {
+        for (let i = 0; i < processos.length; i++) {
+          const processo = processos[i];
+          ordemExecucao += processo.pid + " ";
+          tempoExecucaoProcessos.push(processo.tempoExecucao);
+          tempoExecucaoTotal += processo.tempoExecucao;
+        }
+      } else if (politicaEscalonamento === "sjf") {
+        const sortedProcessos = processos.slice().sort((a, b) => a.tempoExecucao - b.tempoExecucao);
+
+        for (let i = 0; i < sortedProcessos.length; i++) {
+          const processo = sortedProcessos[i];
+          ordemExecucao += processo.pid + " ";
+          tempoExecucaoProcessos.push(processo.tempoExecucao);
+          tempoExecucaoTotal += processo.tempoExecucao;
+        }
+      } else if (politicaEscalonamento === "roundRobin") {
+        const quantum = 2; // Valor do quantum para o Round Robin
+
+        while (processos.length > 0) {
+          for (let i = 0; i < processos.length; i++) {
+            const processo = processos[i];
+
+            if (processo.tempoExecucao <= quantum) {
+              ordemExecucao += processo.pid + " ";
+              tempoExecucaoProcessos.push(processo.tempoExecucao);
+              tempoExecucaoTotal += processo.tempoExecucao;
+
+              processos.splice(i, 1);
+              i--;
+            } else {
+              ordemExecucao += processo.pid + " ";
+              tempoExecucaoProcessos.push(quantum);
+              tempoExecucaoTotal += quantum;
+
+              processo.tempoExecucao -= quantum;
+            }
+          }
+        }
+      }
+
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = `
+        <h2>Resultados</h2>
+        <p><strong>Ordem de Execução dos Processos:</strong> ${ordemExecucao}</p>
+        <p><strong>Tempo de Execução dos Processos:</strong> ${tempoExecucaoProcessos.join(" ")}</p>
+        <p><strong>Tempo Médio de Execução:</strong> ${tempoExecucaoTotal / processos.length}</p>
+      `;
+    }
   </script>
 </body>
 </html>
