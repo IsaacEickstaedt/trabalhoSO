@@ -61,6 +61,12 @@
       padding: 10px;
       background-color: #f2f2f2;
     }
+
+    #ordemExecucao {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f2f2f2;
+    }
   </style>
 </head>
 <body>
@@ -108,7 +114,7 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <select id="politicaEscalonamento" required disabled>
+            <select id="politicaEscalonamento" required>
               <option value="">Selecione</option>
               <option value="fifo">FIFO</option>
               <option value="sjf">SJF</option>
@@ -118,7 +124,7 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <button type="button" onclick="executarProcessos()" disabled>Executar Processos</button>
+            <button type="button" onclick="executarProcessos()">Executar Processos</button>
           </div>
         </div>
       </div>
@@ -138,6 +144,7 @@
   </table>
 
   <div id="resultado"></div>
+  <div id="ordemExecucao"></div>
 
   <script>
     class Processo {
@@ -180,65 +187,153 @@
       const politicaEscalonamentoInput = document.getElementById("politicaEscalonamento");
       const politicaEscalonamento = politicaEscalonamentoInput.value;
 
-      let tempoTotal = 0;
+      if (politicaEscalonamento) {
+        const resultadoDiv = document.getElementById("resultado");
+        resultadoDiv.innerHTML = "";
 
-      for (let i = 0; i < processos.length; i++) {
-        const processo = processos[i];
-        tempoTotal += processo.tempoExecucao;
+        if (politicaEscalonamento === "fifo") {
+          executarFIFO();
+        } else if (politicaEscalonamento === "sjf") {
+          executarSJF();
+        } else if (politicaEscalonamento === "roundRobin") {
+          const quantum = parseInt(prompt("Informe o Quantum:"));
+          if (quantum) {
+            executarRoundRobin(quantum);
+          } else {
+            alert("Quantum inválido!");
+          }
+        }
+      }
+    }
+
+    function executarFIFO() {
+      const processosCopy = [...processos];
+      const ordemExecucaoDiv = document.getElementById("ordemExecucao");
+      ordemExecucaoDiv.innerHTML = "";
+
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = "<h3>Resultados:</h3>";
+
+      let tempoEsperaTotal = 0;
+      let tempoExecucaoTotal = 0;
+      let tempoRetornoTotal = 0;
+
+      for (let i = 0; i < processosCopy.length; i++) {
+        const processo = processosCopy[i];
+        const tempoEspera = tempoEsperaTotal;
+        const tempoRetorno = tempoEspera + processo.tempoExecucao;
+
+        tempoEsperaTotal += processo.tempoExecucao;
+        tempoExecucaoTotal += processo.tempoExecucao;
+        tempoRetornoTotal += tempoRetorno;
+
+        const ordemExecucao = document.createElement("p");
+        ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
+        ordemExecucaoDiv.appendChild(ordemExecucao);
       }
 
-      let ordemExecucao = "";
-      let tempoExecucaoProcessos = [];
+      const tempoMedioEspera = tempoEsperaTotal / processosCopy.length;
+      const tempoMedioRetorno = tempoRetornoTotal / processosCopy.length;
+
+      const resultado = document.createElement("p");
+      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)} | Tempo Médio de Retorno: ${tempoMedioRetorno.toFixed(2)}`;
+      resultadoDiv.appendChild(resultado);
+    }
+
+    function executarSJF() {
+      const processosCopy = [...processos];
+      processosCopy.sort((a, b) => a.tempoExecucao - b.tempoExecucao);
+
+      const ordemExecucaoDiv = document.getElementById("ordemExecucao");
+      ordemExecucaoDiv.innerHTML = "";
+
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = "<h3>Resultados:</h3>";
+
+      let tempoEsperaTotal = 0;
       let tempoExecucaoTotal = 0;
+      let tempoRetornoTotal = 0;
 
-      if (politicaEscalonamento === "fifo") {
-        for (let i = 0; i < processos.length; i++) {
-          const processo = processos[i];
-          ordemExecucao += processo.pid + " ";
-          tempoExecucaoProcessos.push(processo.tempoExecucao);
+      for (let i = 0; i < processosCopy.length; i++) {
+        const processo = processosCopy[i];
+        const tempoEspera = tempoEsperaTotal;
+        const tempoRetorno = tempoEspera + processo.tempoExecucao;
+
+        tempoEsperaTotal += processo.tempoExecucao;
+        tempoExecucaoTotal += processo.tempoExecucao;
+        tempoRetornoTotal += tempoRetorno;
+
+        const ordemExecucao = document.createElement("p");
+        ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
+        ordemExecucaoDiv.appendChild(ordemExecucao);
+      }
+
+      const tempoMedioEspera = tempoEsperaTotal / processosCopy.length;
+      const tempoMedioRetorno = tempoRetornoTotal / processosCopy.length;
+
+      const resultado = document.createElement("p");
+      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)} | Tempo Médio de Retorno: ${tempoMedioRetorno.toFixed(2)}`;
+      resultadoDiv.appendChild(resultado);
+    }
+
+    function executarRoundRobin(quantum) {
+      const processosCopy = [...processos];
+      const ordemExecucaoDiv = document.getElementById("ordemExecucao");
+      ordemExecucaoDiv.innerHTML = "";
+
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = "<h3>Resultados:</h3>";
+
+      let tempoEsperaTotal = 0;
+      let tempoExecucaoTotal = 0;
+      let tempoRetornoTotal = 0;
+
+      let index = 0;
+      while (processosCopy.length > 0) {
+        const processo = processosCopy[index];
+
+        if (processo.tempoExecucao <= quantum) {
+          const tempoEspera = tempoEsperaTotal;
+          const tempoRetorno = tempoEspera + processo.tempoExecucao;
+
+          tempoEsperaTotal += processo.tempoExecucao;
           tempoExecucaoTotal += processo.tempoExecucao;
-        }
-      } else if (politicaEscalonamento === "sjf") {
-        const sortedProcessos = processos.slice().sort((a, b) => a.tempoExecucao - b.tempoExecucao);
+          tempoRetornoTotal += tempoRetorno;
 
-        for (let i = 0; i < sortedProcessos.length; i++) {
-          const processo = sortedProcessos[i];
-          ordemExecucao += processo.pid + " ";
-          tempoExecucaoProcessos.push(processo.tempoExecucao);
-          tempoExecucaoTotal += processo.tempoExecucao;
-        }
-      } else if (politicaEscalonamento === "roundRobin") {
-        const quantum = 2; // Valor do quantum para o Round Robin
+          const ordemExecucao = document.createElement("p");
+          ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
+          ordemExecucaoDiv.appendChild(ordemExecucao);
 
-        while (processos.length > 0) {
-          for (let i = 0; i < processos.length; i++) {
-            const processo = processos[i];
+          processosCopy.splice(index, 1);
+          if (index >= processosCopy.length) {
+            index = 0;
+          }
+        } else {
+          const tempoEspera = tempoEsperaTotal;
+          const tempoRetorno = tempoEspera + quantum;
 
-            if (processo.tempoExecucao <= quantum) {
-              ordemExecucao += processo.pid + " ";
-              tempoExecucaoProcessos.push(processo.tempoExecucao);
-              tempoExecucaoTotal += processo.tempoExecucao;
+          tempoEsperaTotal += quantum;
+          tempoExecucaoTotal += quantum;
 
-              processos.splice(i, 1);
-              i--;
-            } else {
-              ordemExecucao += processo.pid + " ";
-              tempoExecucaoProcessos.push(quantum);
-              tempoExecucaoTotal += quantum;
+          processo.tempoExecucao -= quantum;
 
-              processo.tempoExecucao -= quantum;
-            }
+          const ordemExecucao = document.createElement("p");
+          ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
+          ordemExecucaoDiv.appendChild(ordemExecucao);
+
+          index++;
+          if (index >= processosCopy.length) {
+            index = 0;
           }
         }
       }
 
-      const resultadoDiv = document.getElementById("resultado");
-      resultadoDiv.innerHTML = `
-        <h2>Resultados</h2>
-        <p><strong>Ordem de Execução dos Processos:</strong> ${ordemExecucao}</p>
-        <p><strong>Tempo de Execução dos Processos:</strong> ${tempoExecucaoProcessos.join(" ")}</p>
-        <p><strong>Tempo Médio de Execução:</strong> ${tempoExecucaoTotal / processos.length}</p>
-      `;
+      const tempoMedioEspera = tempoEsperaTotal / processos.length;
+      const tempoMedioRetorno = tempoRetornoTotal / processos.length;
+
+      const resultado = document.createElement("p");
+      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)} | Tempo Médio de Retorno: ${tempoMedioRetorno.toFixed(2)}`;
+      resultadoDiv.appendChild(resultado);
     }
   </script>
 </body>
