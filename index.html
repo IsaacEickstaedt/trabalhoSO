@@ -217,6 +217,7 @@
       let tempoEsperaTotal = 0;
       let tempoExecucaoTotal = 0;
       let tempoRetornoTotal = 0;
+      let tempoMdEspera = 0;
 
       for (let i = 0; i < processosCopy.length; i++) {
         const processo = processosCopy[i];
@@ -224,6 +225,7 @@
         const tempoRetorno = tempoEspera + processo.tempoExecucao;
 
         tempoEsperaTotal += processo.tempoExecucao;
+        tempoMdEspera += tempoEspera;
         tempoExecucaoTotal += processo.tempoExecucao;
         tempoRetornoTotal += tempoRetorno;
 
@@ -232,49 +234,49 @@
         ordemExecucaoDiv.appendChild(ordemExecucao);
       }
 
-      const tempoMedioEspera = tempoEsperaTotal / processosCopy.length;
+      const tempoMedioEspera = tempoMdEspera / processosCopy.length;
       const tempoMedioRetorno = tempoRetornoTotal / processosCopy.length;
 
       const resultado = document.createElement("p");
-      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)} | Tempo Médio de Retorno: ${tempoMedioRetorno.toFixed(2)}`;
+      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)}`;
       resultadoDiv.appendChild(resultado);
     }
 
     function executarSJF() {
-      const processosCopy = [...processos];
-      processosCopy.sort((a, b) => a.tempoExecucao - b.tempoExecucao);
+  const processosCopy = [...processos];
+  processosCopy.sort((a, b) => a.tempoExecucao - b.tempoExecucao);
 
-      const ordemExecucaoDiv = document.getElementById("ordemExecucao");
-      ordemExecucaoDiv.innerHTML = "";
+  const ordemExecucaoDiv = document.getElementById("ordemExecucao");
+  ordemExecucaoDiv.innerHTML = "";
 
-      const resultadoDiv = document.getElementById("resultado");
-      resultadoDiv.innerHTML = "<h3>Resultados:</h3>";
+  const resultadoDiv = document.getElementById("resultado");
+  resultadoDiv.innerHTML = "<h3>Resultados:</h3>";
 
-      let tempoEsperaTotal = 0;
-      let tempoExecucaoTotal = 0;
-      let tempoRetornoTotal = 0;
+  let tempoEsperaTotal = 0;
+  let tempoExecucaoTotal = 0;
+  let tempoRetornoTotal = 0;
 
-      for (let i = 0; i < processosCopy.length; i++) {
-        const processo = processosCopy[i];
-        const tempoEspera = tempoEsperaTotal;
-        const tempoRetorno = tempoEspera + processo.tempoExecucao;
+  for (let i = 0; i < processosCopy.length; i++) {
+    const processo = processosCopy[i];
+    const tempoEspera = tempoEsperaTotal;
+    const tempoRetorno = tempoEspera + processo.tempoExecucao;
 
-        tempoEsperaTotal += processo.tempoExecucao;
-        tempoExecucaoTotal += processo.tempoExecucao;
-        tempoRetornoTotal += tempoRetorno;
+    tempoEsperaTotal += processo.tempoExecucao;
+    tempoExecucaoTotal += processo.tempoExecucao;
+    tempoRetornoTotal += tempoRetorno;
 
-        const ordemExecucao = document.createElement("p");
-        ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
-        ordemExecucaoDiv.appendChild(ordemExecucao);
-      }
+    const ordemExecucao = document.createElement("p");
+    ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
+    ordemExecucaoDiv.appendChild(ordemExecucao);
+  }
 
-      const tempoMedioEspera = tempoEsperaTotal / processosCopy.length;
-      const tempoMedioRetorno = tempoRetornoTotal / processosCopy.length;
+  const tempoMedioEspera = tempoEsperaTotal / processosCopy.length;
+  const tempoMedioRetorno = tempoRetornoTotal / processosCopy.length;
 
-      const resultado = document.createElement("p");
-      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)} | Tempo Médio de Retorno: ${tempoMedioRetorno.toFixed(2)}`;
-      resultadoDiv.appendChild(resultado);
-    }
+  const resultado = document.createElement("p");
+  resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)}`;
+  resultadoDiv.appendChild(resultado);
+}
 
     function executarRoundRobin(quantum) {
       const processosCopy = [...processos];
@@ -332,7 +334,7 @@
       const tempoMedioRetorno = tempoRetornoTotal / processos.length;
 
       const resultado = document.createElement("p");
-      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)} | Tempo Médio de Retorno: ${tempoMedioRetorno.toFixed(2)}`;
+      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)}`;
       resultadoDiv.appendChild(resultado);
     }
   </script>
