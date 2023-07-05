@@ -197,8 +197,9 @@
           executarSJF();
         } else if (politicaEscalonamento === "roundRobin") {
           const quantum = parseInt(prompt("Informe o Quantum:"));
+          const tmptroca = parseInt(prompt("Informe o Tempo de Troca de Contexto:"));
           if (quantum) {
-            executarRoundRobin(quantum);
+            executarRoundRobin(quantum, tmptroca);
           } else {
             alert("Quantum inválido!");
           }
@@ -244,7 +245,7 @@
 
     function executarSJF() {
   const processosCopy = [...processos];
-  processosCopy.sort((a, b) => a.tempoExecucao - b.tempoExecucao);
+  const processosExecutados = [];
 
   const ordemExecucaoDiv = document.getElementById("ordemExecucao");
   ordemExecucaoDiv.innerHTML = "";
@@ -256,12 +257,16 @@
   let tempoExecucaoTotal = 0;
   let tempoRetornoTotal = 0;
 
-  for (let i = 0; i < processosCopy.length; i++) {
-    const processo = processosCopy[i];
-    const tempoEspera = tempoEsperaTotal;
+  while (processosCopy.length > 0) {
+    processosCopy.sort((a, b) => a.tempoExecucao - b.tempoExecucao);
+
+    const processo = processosCopy.shift();
+    processosExecutados.push(processo);
+
+    const tempoEspera = tempoExecucaoTotal;
     const tempoRetorno = tempoEspera + processo.tempoExecucao;
 
-    tempoEsperaTotal += processo.tempoExecucao;
+    tempoEsperaTotal += tempoEspera;
     tempoExecucaoTotal += processo.tempoExecucao;
     tempoRetornoTotal += tempoRetorno;
 
@@ -270,73 +275,63 @@
     ordemExecucaoDiv.appendChild(ordemExecucao);
   }
 
-  const tempoMedioEspera = tempoEsperaTotal / processosCopy.length;
-  const tempoMedioRetorno = tempoRetornoTotal / processosCopy.length;
+  const tempoMedioEspera = tempoEsperaTotal / processosExecutados.length;
+  const tempoMedioRetorno = tempoRetornoTotal / processosExecutados.length;
 
   const resultado = document.createElement("p");
   resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)}`;
   resultadoDiv.appendChild(resultado);
 }
 
-    function executarRoundRobin(quantum) {
-      const processosCopy = [...processos];
-      const ordemExecucaoDiv = document.getElementById("ordemExecucao");
-      ordemExecucaoDiv.innerHTML = "";
+    function executarRoundRobin(quantum, tempoTrocaContexto) {
+  const processosCopy = [...processos];
+  const ordemExecucaoDiv = document.getElementById("ordemExecucao");
+  ordemExecucaoDiv.innerHTML = "";
 
-      const resultadoDiv = document.getElementById("resultado");
-      resultadoDiv.innerHTML = "<h3>Resultados:</h3>";
+  const resultadoDiv = document.getElementById("resultado");
+  resultadoDiv.innerHTML = "<h3>Resultados:</h3>";
 
-      let tempoEsperaTotal = 0;
-      let tempoExecucaoTotal = 0;
-      let tempoRetornoTotal = 0;
+  let tempoEsperaTotal = 0;
+  let tempoExecucaoTotal = 0;
+  let tempoRetornoTotal = 0;
+  let tempoMdEspera = 0;
+  let tempoAtualExecucao = 0;
 
-      let index = 0;
-      while (processosCopy.length > 0) {
-        const processo = processosCopy[index];
+  while (processosCopy.length > 0) {
+    const processo = processosCopy[0];
+    const tempoEspera = tempoAtualExecucao;
+    const tempoRetorno = tempoEspera + Math.min(quantum, processo.tempoExecucao);
 
-        if (processo.tempoExecucao <= quantum) {
-          const tempoEspera = tempoEsperaTotal;
-          const tempoRetorno = tempoEspera + processo.tempoExecucao;
+    tempoAtualExecucao += Math.min(quantum, processo.tempoExecucao);
+    processo.tempoExecucao -= Math.min(quantum, processo.tempoExecucao);
 
-          tempoEsperaTotal += processo.tempoExecucao;
-          tempoExecucaoTotal += processo.tempoExecucao;
-          tempoRetornoTotal += tempoRetorno;
-
-          const ordemExecucao = document.createElement("p");
-          ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
-          ordemExecucaoDiv.appendChild(ordemExecucao);
-
-          processosCopy.splice(index, 1);
-          if (index >= processosCopy.length) {
-            index = 0;
-          }
-        } else {
-          const tempoEspera = tempoEsperaTotal;
-          const tempoRetorno = tempoEspera + quantum;
-
-          tempoEsperaTotal += quantum;
-          tempoExecucaoTotal += quantum;
-
-          processo.tempoExecucao -= quantum;
-
-          const ordemExecucao = document.createElement("p");
-          ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
-          ordemExecucaoDiv.appendChild(ordemExecucao);
-
-          index++;
-          if (index >= processosCopy.length) {
-            index = 0;
-          }
-        }
-      }
-
-      const tempoMedioEspera = tempoEsperaTotal / processos.length;
-      const tempoMedioRetorno = tempoRetornoTotal / processos.length;
-
-      const resultado = document.createElement("p");
-      resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)}`;
-      resultadoDiv.appendChild(resultado);
+    if (processo.tempoExecucao <= 0) {
+      processosCopy.shift(); 
+    } else {
+      processosCopy.push(processosCopy.shift()); 
     }
+
+    tempoEsperaTotal += tempoEspera;
+    tempoMdEspera += tempoEspera;
+    tempoExecucaoTotal += Math.min(quantum, processo.tempoExecucao);
+    tempoRetornoTotal += tempoRetorno;
+
+    const ordemExecucao = document.createElement("p");
+    ordemExecucao.innerHTML = `<strong>Processo ${processo.pid}</strong> executado (Tempo Espera: ${tempoEspera}, Tempo Retorno: ${tempoRetorno})`;
+    ordemExecucaoDiv.appendChild(ordemExecucao);
+
+    if (tempoTrocaContexto && processosCopy.length > 0) {
+      tempoAtualExecucao += tempoTrocaContexto; 
+    }
+  }
+
+  const tempoMedioEspera = tempoMdEspera / processos.length;
+  const tempoMedioRetorno = tempoRetornoTotal / processos.length;
+
+  const resultado = document.createElement("p");
+  resultado.innerHTML = `Tempo Médio de Espera: ${tempoMedioEspera.toFixed(2)}`;
+  resultadoDiv.appendChild(resultado);
+}
   </script>
 </body>
 </html>
